@@ -46,6 +46,15 @@ pkg_cumulate_arch() {
 }
 
 pkg_install_arch() {
+    # Pacman auto can't handle building x86_64 to i686. So make sure that correct architecture is used
+    case ${BUILD_ARCH} in
+         x86_64*)
+           (cd $BUILD_ROOT/etc && sed -i "s/^Architecture = auto/#Architecture = x86_64/g" pacman.conf)
+         ;;
+         i686*)
+           (cd $BUILD_ROOT/etc && sed -i "s/^Architecture = auto/#Architecture = i686/g" pacman.conf)
+         ;;
+    esac
     # Pacman can't handle chroot
     # https://bbs.archlinux.org/viewtopic.php?id=129661
     (cd $BUILD_ROOT/etc && sed -i "s/^CheckSpace/#CheckSpace/g" pacman.conf)
